@@ -13,5 +13,3 @@ wifidog的luci管理界面，基于openwert的可编译package
 2.执行make menuconfig，在LuCI -》3. Applications-》luci-app-wifidog 找到该包，勾选上
 3.编译整个skd，或者 make package/luci-wifidog/install 单独编译
 
-
-

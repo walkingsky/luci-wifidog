@@ -2,29 +2,12 @@
 #by walkingsky
 
 include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/package.mk
 
 PKG_NAME:=luci-wifidog
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
-USELOCAL:=1
-ifeq ($(USELOCAL),1)
-  PKG_VERSION:=0.11.1
-else
-  PKG_VERSION:=0.11.1
-endif
-
-PKG_BUILD_DIR:=$(BUILD_DIR)/luci/applications/luci-wifidog
-
-### Templates ###
-define Package/luci/install/template
-	$(CP) -a $(BUILD_DIR)/luci/$(2)/dist/* $(1)/ -R
-	$(CP) -a $(BUILD_DIR)/luci/$(2)/ipkg/* $(1)/CONTROL/ 2>/dev/null || true
-endef
-
-
-define Package/luci-app-wifidog  
+define Package/luci-wifidog  
   SECTION:=luci
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
@@ -34,14 +17,20 @@ define Package/luci-app-wifidog
 endef
 
 define Build/Prepare
-	mkdir -p 	$(PKG_BUILD_DIR)
-	cp -a src/* $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
 endef
 
-define Package/luci-app-wifidog/install
-        $(call Package/luci/install/template,$(1),applications/luci-wifidog)
+define Package/luci-wifidog/install
+    $(INSTALL_DIR) $(1)/etc/config	
+	$(CP) ./files/etc/config/* $(1)/etc/config/
+	$(INSTALL_DIR) $(1)/etc/init.d	
+	$(INSTALL_BIN)./files/etc/init.d/* $(1)/etc/init.d/
+	$(INSTALL_DIR) $(1)/etc/uci-defaults	
+	$(INSTALL_BIN) ./files/etc/uci-defaults/* $(1)/etc/uci-defaults/
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) ./files/usr/sbin/* $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) ./files/usr/lib/* $(1)/usr/lib/
 endef
-ifneq ($(CONFIG_PACKAGE_luci-app-wifidog),)
-        PKG_SELECTED_MODULES+=applications/luci-wifidog
-endif
-$(eval $(call BuildPackage,luci-app-wifidog))
+
+$(eval $(call BuildPackage,luci-wifidog))
