@@ -43,9 +43,9 @@ create_config(){
 	config_get gateway_id "wifidog" "gateway_id" $gateway_id	
 	config_get externalinterface "wifidog" "externalinterface" "eth0.2"	
 	config_get gateway_interface "wifidog" "gateway_interface" "br-lan"	
-	config_get gateway_hostname "wifidog" "gateway_hostname" "www.test.com"
-	config_get gateway_httpport "wifidog" "gateway_httpport" "80"
-	config_get gateway_path "wifidog" "gateway_path" "/wifidog/"
+	config_get server_hostname "wifidog" "server_hostname" "www.test.com"
+	config_get server_httpport "wifidog" "server_httpport" "80"
+	config_get server_path "wifidog" "server_path" "/wifidog/"
 
 	config_get server_sslAvailable "wifidog" "server_sslAvailable" "0"
 	config_get server_sslport "wifidog" "server_sslport" "443"
@@ -80,11 +80,11 @@ externalinterface $externalinterface
 GatewayPort $gateway_port
 
 AuthServer {
-		Hostname $gateway_hostname
+		Hostname $server_hostname
 		SSLAvailable $server_sslAvailable
 		SSLPort	$server_sslport
-		HTTPPort $gateway_httpport
-		Path $gateway_path
+		HTTPPort $server_httpport
+		Path $server_path
 		LoginScriptPathFragment  	$server_LoginScriptPathFragment
 		PortalScriptPathFragment 	$server_PortalScriptPathFragment
 		MsgScriptPathFragment    	$server_MsgScriptPathFragment
