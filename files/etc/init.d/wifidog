@@ -3,6 +3,7 @@
 #modify by walkingsky
 
 START=65
+USE_PROCD=1
 EXTRA_COMMANDS="status"
 EXTRA_HELP="        status Print the status of the service"
 
@@ -33,7 +34,7 @@ add_allowrule(){
 }
 
 
-#wifidog 配置
+#wifidog ??
 create_config(){
 	
 	config_load wifidog	
@@ -125,7 +126,7 @@ FirewallRuleSet locked-users {
 	
 }
 
-start() {
+start_service() {
 	config_load wifidog
 	
 	config_get wifidog_enable "wifidog" "wifidog_enable" "0"
@@ -137,13 +138,15 @@ start() {
 	create_config
 	
 	sleep 1
-	/usr/bin/wifidog-init start
-}
-
-stop() {
-	/usr/bin/wifidog-init stop
+	procd_open_instance
+    # -s: log to syslog
+    # -f: run in foreground
+    procd_set_param command /usr/bin/wifidog -s -f
+    procd_set_param respawn # respawn automatically if something died
+    procd_set_param file /etc/wifidog.conf
+    procd_close_instance
 }
 
 status() {
-	/usr/bin/wifidog-init status
+    /usr/bin/wdctl status
 }
