@@ -3,6 +3,7 @@
 #modify by walkingsky
 
 START=65
+USE_PROCD=1
 EXTRA_COMMANDS="status"
 EXTRA_HELP="        status Print the status of the service"
 
@@ -33,7 +34,7 @@ add_allowrule(){
 }
 
 
-#wifidog 配置
+#wifidog ??
 create_config(){
 	
 	config_load wifidog	
@@ -43,9 +44,9 @@ create_config(){
 	config_get gateway_id "wifidog" "gateway_id" $gateway_id	
 	config_get externalinterface "wifidog" "externalinterface" "eth0.2"	
 	config_get gateway_interface "wifidog" "gateway_interface" "br-lan"	
-	config_get gateway_hostname "wifidog" "gateway_hostname" "www.test.com"
-	config_get gateway_httpport "wifidog" "gateway_httpport" "80"
-	config_get gateway_path "wifidog" "gateway_path" "/wifidog/"
+	config_get server_hostname "wifidog" "server_hostname" "www.test.com"
+	config_get server_httpport "wifidog" "server_httpport" "80"
+	config_get server_path "wifidog" "server_path" "/wifidog/"
 
 	config_get server_sslAvailable "wifidog" "server_sslAvailable" "0"
 	config_get server_sslport "wifidog" "server_sslport" "443"
@@ -80,11 +81,11 @@ externalinterface $externalinterface
 GatewayPort $gateway_port
 
 AuthServer {
-		Hostname $gateway_hostname
+		Hostname $server_hostname
 		SSLAvailable $server_sslAvailable
 		SSLPort	$server_sslport
-		HTTPPort $gateway_httpport
-		Path $gateway_path
+		HTTPPort $server_httpport
+		Path $server_path
 		LoginScriptPathFragment  	$server_LoginScriptPathFragment
 		PortalScriptPathFragment 	$server_PortalScriptPathFragment
 		MsgScriptPathFragment    	$server_MsgScriptPathFragment
@@ -125,7 +126,7 @@ FirewallRuleSet locked-users {
 	
 }
 
-start() {
+start_service() {
 	config_load wifidog
 	
 	config_get wifidog_enable "wifidog" "wifidog_enable" "0"
@@ -137,13 +138,15 @@ start() {
 	create_config
 	
 	sleep 1
-	/usr/bin/wifidog-init start
-}
-
-stop() {
-	/usr/bin/wifidog-init stop
+	procd_open_instance
+    # -s: log to syslog
+    # -f: run in foreground
+    procd_set_param command /usr/bin/wifidog -s -f
+    procd_set_param respawn # respawn automatically if something died
+    procd_set_param file /etc/wifidog.conf
+    procd_close_instance
 }
 
 status() {
-	/usr/bin/wifidog-init status
+    /usr/bin/wdctl status
 }
