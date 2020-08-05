@@ -7,7 +7,7 @@ wifidog的luci管理界面，基于lede的可编译package
 ---
 ## 安装方法
 
-克隆本项目到本地，确认切换到 lede 分支
+克隆本项目到本地
 将目录名称由 luci-wifidog 改名成 luci-app-wifidog
 复制 luci-app-wifidog 目录到本地lede的目录树中，目录结构如下：lede/package/feeds/luci/luci-app-wifidog
 
